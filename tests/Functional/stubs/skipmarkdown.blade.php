@@ -3,10 +3,6 @@
 hello world!
 
 
-* one 
-* two 
+* one
+* two
 * three
-
-skip minification
-
-<!-- skip.minification -->

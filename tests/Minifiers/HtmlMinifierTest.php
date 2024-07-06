@@ -34,27 +34,8 @@ class HtmlMinifierTest extends AbstractTestCase
         $this->assertSame('test', $return);
     }
 
-    public function testRenderFull()
-    {
-        $html = $this->getHtmlMinifier();
-        $text = 'test<style>font-size: 12pt;</style><script>alert("Hello");</script>';
-
-        $html->getCssMinifier()->shouldReceive('render')->once()
-            ->with('font-size: 12pt;')->andReturn('foo');
-
-        $html->getJsMinifier()->shouldReceive('render')->once()
-            ->with('alert("Hello");')->andReturn('bar');
-
-        $return = $html->render($text);
-
-        $this->assertSame('test<style>foo</style><script>bar</script>', $return);
-    }
-
     protected function getHtmlMinifier()
     {
-        $css = Mockery::mock(CssMinifier::class);
-        $js = Mockery::mock(JsMinifier::class);
-
-        return new HtmlMinifier($css, $js);
+        return new HtmlMinifier();
     }
 }

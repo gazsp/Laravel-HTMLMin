@@ -54,7 +54,7 @@ class MinifyMiddleware
     {
         $response = $next($request);
 
-        if ($this->isAResponseObject($response) && $this->isAnHtmlResponse($response)) {
+        if ($this->isResponse($response) && $this->isHtmlResponse($response)) {
             $output = $response->getContent();
             $minified = $this->html->render($output);
             $response->setContent($minified);
@@ -70,7 +70,7 @@ class MinifyMiddleware
      *
      * @return bool
      */
-    protected function isAResponseObject($response)
+    protected function isResponse($response)
     {
         return is_object($response) && $response instanceof Response;
     }
@@ -82,7 +82,7 @@ class MinifyMiddleware
      *
      * @return bool
      */
-    protected function isAnHtmlResponse(Response $response)
+    protected function isHtmlResponse(Response $response)
     {
         $type = $response->headers->get('Content-Type');
 

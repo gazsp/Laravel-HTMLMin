@@ -12,11 +12,7 @@
 
 namespace HTMLMin\HTMLMin;
 
-use HTMLMin\HTMLMin\Compilers\MinifyCompiler;
-use HTMLMin\HTMLMin\Minifiers\BladeMinifier;
-use HTMLMin\HTMLMin\Minifiers\CssMinifier;
 use HTMLMin\HTMLMin\Minifiers\HtmlMinifier;
-use HTMLMin\HTMLMin\Minifiers\JsMinifier;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider;
@@ -43,10 +39,6 @@ class HTMLMinServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->setupConfig();
-
-        if ($this->app->config->get('htmlmin.blade')) {
-            $this->enableBladeOptimisations();
-        }
     }
 
     /**
@@ -68,36 +60,13 @@ class HTMLMinServiceProvider extends ServiceProvider
     }
 
     /**
-     * Enable blade optimisations.
-     *
-     * @return void
-     */
-    protected function enableBladeOptimisations()
-    {
-        $app = $this->app;
-
-        $app->view->getEngineResolver()->register('blade', function () use ($app) {
-            $compiler = $app['htmlmin.compiler'];
-            $compiler->initMinifyCompiler();
-
-            return new CompilerEngine($compiler);
-        });
-
-        $app->view->addExtension('blade.php', 'blade');
-    }
-
-    /**
      * Register the service provider.
      *
      * @return void
      */
     public function register()
     {
-        $this->registerJsMinifier();
-        $this->registerCssMinifier();
         $this->registerHtmlMinifier();
-        $this->registerBladeMinifier();
-        $this->registerMinifyCompiler();
         $this->registerHTMLMin();
     }
 
@@ -137,57 +106,10 @@ class HTMLMinServiceProvider extends ServiceProvider
     protected function registerHtmlMinifier()
     {
         $this->app->singleton('htmlmin.html', function (Container $app) {
-            $css = $app['htmlmin.css'];
-            $js = $app['htmlmin.js'];
-
-            return new HtmlMinifier($css, $js);
+            return new HtmlMinifier();
         });
 
         $this->app->alias('htmlmin.html', HtmlMinifier::class);
-    }
-
-    /**
-     * Register the blade minifier class.
-     *
-     * @return void
-     */
-    protected function registerBladeMinifier()
-    {
-        $this->app->singleton('htmlmin.blade', function (Container $app) {
-            $force = $app->config->get('htmlmin.force', false);
-
-            return new BladeMinifier($force);
-        });
-
-        $this->app->alias('htmlmin.blade', BladeMinifier::class);
-    }
-
-    /**
-     * Register the minify compiler class.
-     *
-     * @return void
-     */
-    protected function registerMinifyCompiler()
-    {
-        if (method_exists($this, 'callAfterResolving')) {
-            $this->callAfterResolving('view', function () {
-                $this->previousCompiler = $this->app->make('view')
-                    ->getEngineResolver()
-                    ->resolve('blade')
-                    ->getCompiler();
-            });
-        }
-
-        $this->app->singleton('htmlmin.compiler', function (Container $app) {
-            $blade = $app['htmlmin.blade'];
-            $files = $app['files'];
-            $storagePath = $app->config->get('view.compiled');
-            $ignoredPaths = $app->config->get('htmlmin.ignore', []);
-
-            return new MinifyCompiler($blade, $files, $storagePath, $ignoredPaths, $this->previousCompiler, $this->previousCompiler->getCustomDirectives());
-        });
-
-        $this->app->alias('htmlmin.compiler', MinifyCompiler::class);
     }
 
     /**
@@ -198,12 +120,9 @@ class HTMLMinServiceProvider extends ServiceProvider
     protected function registerHTMLMin()
     {
         $this->app->singleton('htmlmin', function (Container $app) {
-            $blade = $app['htmlmin.blade'];
-            $css = $app['htmlmin.css'];
-            $js = $app['htmlmin.js'];
             $html = $app['htmlmin.html'];
 
-            return new HTMLMin($blade, $css, $js, $html);
+            return new HTMLMin($html);
         });
 
         $this->app->alias('htmlmin', HTMLMin::class);
@@ -218,11 +137,7 @@ class HTMLMinServiceProvider extends ServiceProvider
     {
         return [
             'htmlmin',
-            'htmlmin.js',
-            'htmlmin.css',
             'htmlmin.html',
-            'htmlmin.blade',
-            'htmlmin.compiler',
         ];
     }
 }

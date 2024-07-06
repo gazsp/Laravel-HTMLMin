@@ -13,12 +13,8 @@
 namespace HTMLMin\Tests\HTMLMin;
 
 use GrahamCampbell\TestBenchCore\ServiceProviderTrait;
-use HTMLMin\HTMLMin\Compilers\MinifyCompiler;
 use HTMLMin\HTMLMin\HTMLMin;
-use HTMLMin\HTMLMin\Minifiers\BladeMinifier;
-use HTMLMin\HTMLMin\Minifiers\CssMinifier;
 use HTMLMin\HTMLMin\Minifiers\HtmlMinifier;
-use HTMLMin\HTMLMin\Minifiers\JsMinifier;
 
 /**
  * This is the service provider test class.
@@ -29,29 +25,9 @@ class ServiceProviderTest extends AbstractTestCase
 {
     use ServiceProviderTrait;
 
-    public function testCssMinifierIsInjectable()
-    {
-        $this->assertIsInjectable(CssMinifier::class);
-    }
-
-    public function testJsMinifierIsInjectable()
-    {
-        $this->assertIsInjectable(JsMinifier::class);
-    }
-
     public function testHtmlMinifierIsInjectable()
     {
         $this->assertIsInjectable(HtmlMinifier::class);
-    }
-
-    public function testBladeMinifierIsInjectable()
-    {
-        $this->assertIsInjectable(BladeMinifier::class);
-    }
-
-    public function testCompilerIsInjectable()
-    {
-        $this->assertIsInjectable(MinifyCompiler::class);
     }
 
     public function testHTMLMinIsInjectable()

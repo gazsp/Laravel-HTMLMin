@@ -14,10 +14,7 @@ namespace HTMLMin\Tests\HTMLMin;
 
 use GrahamCampbell\TestBench\AbstractTestCase as AbstractTestBenchTestCase;
 use HTMLMin\HTMLMin\HTMLMin;
-use HTMLMin\HTMLMin\Minifiers\BladeMinifier;
-use HTMLMin\HTMLMin\Minifiers\CssMinifier;
 use HTMLMin\HTMLMin\Minifiers\HtmlMinifier;
-use HTMLMin\HTMLMin\Minifiers\JsMinifier;
 use Mockery;
 
 /**
@@ -30,9 +27,6 @@ class HTMLMinTest extends AbstractTestBenchTestCase
     public function methodProvider()
     {
         return [
-            ['blade', 'getBladeMinifier'],
-            ['css', 'getCssMinifier'],
-            ['js', 'getJsMinifier'],
             ['html', 'getHtmlMinifier'],
         ];
     }
@@ -54,11 +48,8 @@ class HTMLMinTest extends AbstractTestBenchTestCase
 
     protected function getHTMLMin()
     {
-        $blade = Mockery::mock(BladeMinifier::class);
-        $css = Mockery::mock(CssMinifier::class);
-        $js = Mockery::mock(JsMinifier::class);
         $html = Mockery::mock(HtmlMinifier::class);
 
-        return new HTMLMin($blade, $css, $js, $html);
+        return new HTMLMin($html);
     }
 }

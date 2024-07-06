@@ -22,34 +22,6 @@ use Minify_HTML;
 class HtmlMinifier implements MinifierInterface
 {
     /**
-     * The css minifier instance.
-     *
-     * @var \HTMLMin\HTMLMin\Minifiers\CssMinifier
-     */
-    protected $css;
-
-    /**
-     * The js minifier instance.
-     *
-     * @var \HTMLMin\HTMLMin\Minifiers\JsMinifier
-     */
-    protected $js;
-
-    /**
-     * Create a new instance.
-     *
-     * @param \HTMLMin\HTMLMin\Minifiers\CssMinifier $css
-     * @param \HTMLMin\HTMLMin\Minifiers\JsMinifier  $js
-     *
-     * @return void
-     */
-    public function __construct(CssMinifier $css, JsMinifier $js)
-    {
-        $this->css = $css;
-        $this->js = $js;
-    }
-
-    /**
      * Get the minified value.
      *
      * @param string $value
@@ -58,36 +30,6 @@ class HtmlMinifier implements MinifierInterface
      */
     public function render($value)
     {
-        $options = [
-            'cssMinifier' => function ($css) {
-                return $this->css->render($css);
-            },
-            'jsMinifier' => function ($js) {
-                return $this->js->render($js);
-            },
-            'jsCleanComments' => true,
-        ];
-
-        return Minify_HTML::minify($value, $options);
-    }
-
-    /**
-     * Return the css minifier instance.
-     *
-     * @return \HTMLMin\HTMLMin\Minifiers\CssMinifier
-     */
-    public function getCssMinifier()
-    {
-        return $this->css;
-    }
-
-    /**
-     * Return the js minifier instance.
-     *
-     * @return \HTMLMin\HTMLMin\Minifiers\JsMinifier
-     */
-    public function getJsMinifier()
-    {
-        return $this->js;
+        return Minify_HTML::minify($value, []);
     }
 }
